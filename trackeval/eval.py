@@ -72,6 +72,7 @@ class Evaluator:
 
             # Evaluate each tracker
             for tracker in tracker_list:
+                print("************************************")
                 # if not config['BREAK_ON_ERROR'] then go to next tracker without breaking
                 try:
                     # Evaluate each sequence in parallel or in series.
@@ -79,6 +80,7 @@ class Evaluator:
                     # e.g. res[seq_0001][pedestrian][hota][DetA]
                     print('\nEvaluating %s\n' % tracker)
                     time_start = time.time()
+                    #Thiết lập mặc định USE_PARALLEL = False
                     if config['USE_PARALLEL']:
                         if show_progressbar and TQDM_IMPORTED:
                             seq_list_sorted = sorted(seq_list)
@@ -102,14 +104,24 @@ class Evaluator:
                                 results = pool.map(_eval_sequence, seq_list)
                                 res = dict(zip(seq_list, results))
                     else:
+                        print("++++++++++++++++++++++++++++++++++++++++++++++++++")
                         res = {}
+                        # TQDM_IMPORTED = Flase
                         if show_progressbar and TQDM_IMPORTED:
                             seq_list_sorted = sorted(seq_list)
                             for curr_seq in tqdm.tqdm(seq_list_sorted):
                                 res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
                                                               metric_names)
                         else:
+                            print("------------------------------------------------")
+                            # curr_seq: data con trong list data (seq_list)
+                            # dataset: <trackeval.datasets.mot_challenge_2d_box.MotChallenge2DBox object at 0x7fa5f348a460>
+                            # tracker: MPNTrack
+                            # class_list : ['pedestrian']                           
+                            # metrics_list: [<trackeval.metrics.clear.CLEAR object at 0x7f317c8a51f0>, <trackeval.metrics.count.Count object at 0x7f317c8a5310>]
+                            # metric_names: ['CLEAR', 'Count']
                             for curr_seq in sorted(seq_list):
+                                # code sẽ chạy xuống dòng 228 
                                 res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
                                                               metric_names)
 
@@ -212,10 +224,20 @@ class Evaluator:
 
 
 @_timing.time
+# seq: data con trong list data (seq_list)
+# dataset: <trackeval.datasets.mot_challenge_2d_box.MotChallenge2DBox object at 0x7fa5f348a460>
+# tracker: MPNTrack
+# class_list : ['pedestrian']                           
+# metrics_list: [<trackeval.metrics.clear.CLEAR object at 0x7f317c8a51f0>, <trackeval.metrics.count.Count object at 0x7f317c8a5310>]
+# metric_names: ['CLEAR', 'Count']
 def eval_sequence(seq, dataset, tracker, class_list, metrics_list, metric_names):
     """Function for evaluating a single sequence"""
-
+    print("_________________chạy xuống dòng 235______________________________")
     raw_data = dataset.get_raw_seq_data(tracker, seq)
+    print(type(raw_data))
+    print(len(raw_data))
+    with open("a.txt","w") as f:
+        f.write(str(raw_data))
     seq_res = {}
     for cls in class_list:
         seq_res[cls] = {}

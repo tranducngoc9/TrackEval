@@ -87,6 +87,7 @@ if __name__ == '__main__':
     print("_____________________________________________________________________________________")
 
     # Run code
+    #Khỏi tạo class evaluator từ class Evaluator(....)
     evaluator = trackeval.Evaluator(eval_config)
     dataset_list = [trackeval.datasets.MotChallenge2DBox(dataset_config)]
     print("___________________________________dataset_list______________________________________")
@@ -101,4 +102,6 @@ if __name__ == '__main__':
         raise Exception('No metrics selected for evaluation')
     
     print("____________________________Start tinh toan________________________________________________________")
+    # evaluator trỏ tới method evaluate
+    # chạy vào code eval.py
     evaluator.evaluate(dataset_list, metrics_list)
