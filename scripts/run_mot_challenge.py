@@ -78,14 +78,27 @@ if __name__ == '__main__':
     eval_config = {k: v for k, v in config.items() if k in default_eval_config.keys()}
     dataset_config = {k: v for k, v in config.items() if k in default_dataset_config.keys()}
     metrics_config = {k: v for k, v in config.items() if k in default_metrics_config.keys()}
+    print("____________________________________eval_config______________________________________")
+    print(eval_config)
+    print("____________________________________dataset_config___________________________________")
+    print(dataset_config)
+    print("____________________________________metrics_config___________________________________")
+    print(metrics_config)
+    print("_____________________________________________________________________________________")
 
     # Run code
     evaluator = trackeval.Evaluator(eval_config)
     dataset_list = [trackeval.datasets.MotChallenge2DBox(dataset_config)]
+    print("___________________________________dataset_list______________________________________")
+    print(dataset_list)
     metrics_list = []
+    print("__________________________Bat dau for_________________________________________________")
     for metric in [trackeval.metrics.HOTA, trackeval.metrics.CLEAR, trackeval.metrics.Identity, trackeval.metrics.VACE]:
+        print("###################################################################################")
         if metric.get_name() in metrics_config['METRICS']:
             metrics_list.append(metric(metrics_config))
     if len(metrics_list) == 0:
         raise Exception('No metrics selected for evaluation')
+    
+    print("____________________________Start tinh toan________________________________________________________")
     evaluator.evaluate(dataset_list, metrics_list)
