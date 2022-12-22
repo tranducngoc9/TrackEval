@@ -206,26 +206,38 @@ class MotChallenge2DBox(_BaseDataset):
         #ignore_data là dữ liệu ko dùng được = {}
         read_data, ignore_data = self._load_simple_text_file(file, is_zipped=self.data_is_zipped, zip_file=zip_file)
 #Ví dụ về read_data
+
+#Nếu là gt
+#{'1': [['1', '1', '912', '484', '97', '109', '0', '7', '1'], ['1', '2', '1338', '418', '167', '379', '1', '1', '1'], 
+# ['1', '3', '586', '447', '85', '263', '1', '1', '1'], ['1', '4', '1585', '-1', '336', '578', '0', '9', '0.98153'], 
+# ['1', '5', '1163', '441',
+
 #Nếu là tracker
 # {'1': [['1', '0.0', '447.4205017089844', '440.7640686035156', '104.33230590820312', '282.5323181152344', '1', '-1', '-1', '-1'], 
 # ['1', '1.0', '1098.0538330078123', '437.7935485839844', '38.2166748046875', '110.68978881835938', '1', '-1', '-1', '-1'], 
 # ['1', '2.0', '1256.2720947265625'
-#Nếu là gt
-#{'1': [['1', '1', '912', '484', '97', '109', '0', '7', '1'], ['1', '2', '1338', '418', '167', '379', '1', '1', '1'], 
-# ['1', '3', '586', '447', '85', '263', '1', '1', '1'], ['1', '4', '1585', '-1', '336', '578', '0', '9', '0.98153'], 
-# ['1', '5', '1163', '441', 
+ 
         # Convert data to required format
-        num_timesteps = self.seq_lengths[seq]
+        num_timesteps = self.seq_lengths[seq] # num_timesteps = 600 tương ứng với số frame
+
         data_keys = ['ids', 'classes', 'dets']
         if is_gt:
             data_keys += ['gt_crowd_ignore_regions', 'gt_extras']
         else:
             data_keys += ['tracker_confidences']
+        """Khởi tạo biến raw_data là dict 
+        với:
+        - trong key ids: có 100 giá trị None
+        - trong key classes: có 100 giá trị None
+        - trong key dets: có 100 giá trị None """
         raw_data = {key: [None] * num_timesteps for key in data_keys}
 
         # Check for any extra time keys
-        current_time_keys = [str( t+ 1) for t in range(num_timesteps)]
-        extra_time_keys = [x for x in read_data.keys() if x not in current_time_keys]
+        current_time_keys = [str( t+ 1) for t in range(num_timesteps)] #Nếu đk ok thì list sẽ chạy từ 1 đến 600
+        #Nêu ko có Frame mở rộng thêm thì trả về list rỗng
+        extra_time_keys = [x for x in read_data.keys() if x not in current_time_keys]  
+
+        #Thường sẽ ko thỏa mãi đk if ở dưới
         if len(extra_time_keys) > 0:
             if is_gt:
                 text = 'Ground-truth'
@@ -234,11 +246,11 @@ class MotChallenge2DBox(_BaseDataset):
             raise TrackEvalException(
                 text + ' data contains the following invalid timesteps in seq %s: ' % seq + ', '.join(
                     [str(x) + ', ' for x in extra_time_keys]))
-
         for t in range(num_timesteps):
             time_key = str(t+1)
             if time_key in read_data.keys():
                 try:
+                    # Đưa các phần tử trong mỗi key chuyển về float
                     time_data = np.asarray(read_data[time_key], dtype=np.float)
                 except ValueError:
                     if is_gt:
@@ -249,8 +261,8 @@ class MotChallenge2DBox(_BaseDataset):
                             'Cannot convert tracking data from tracker %s, sequence %s to float. Is data corrupted?' % (
                                 tracker, seq))
                 try:
-                    raw_data['dets'][t] = np.atleast_2d(time_data[:, 2:6])
-                    raw_data['ids'][t] = np.atleast_1d(time_data[:, 1]).astype(int)
+                    raw_data['dets'][t] = np.atleast_2d(time_data[:, 2:6]) #Lấy tọa độ bbleft, bbtop, bbwidth, bbheight
+                    raw_data['ids'][t] = np.atleast_1d(time_data[:, 1]).astype(int) #Lấy id 
                 except IndexError:
                     if is_gt:
                         err = 'Cannot load gt data from sequence %s, because there is not enough ' \
@@ -260,6 +272,7 @@ class MotChallenge2DBox(_BaseDataset):
                         err = 'Cannot load tracker data from tracker %s, sequence %s, because there is not enough ' \
                               'columns in the data.' % (tracker, seq)
                         raise TrackEvalException(err)
+                        
                 if time_data.shape[1] >= 8:
                     raw_data['classes'][t] = np.atleast_1d(time_data[:, 7]).astype(int)
                 else:

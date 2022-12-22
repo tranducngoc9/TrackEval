@@ -97,7 +97,7 @@ class _BaseDataset(ABC):
         print(type(raw_gt_data))
         print(raw_gt_data.keys())
         # print(raw_gt_data["gt_ids"])
-        # raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)  #_load_raw_file  là hàm trừu tượng đc đn ở mot_challenge_2d_box.py
+        raw_tracker_data = self._load_raw_file(tracker, seq, is_gt=False)  #_load_raw_file  là hàm trừu tượng đc đn ở mot_challenge_2d_box.py
         raw_data = {**raw_tracker_data, **raw_gt_data}  # Merges dictionaries
 
         # Calculate similarities for each timestep.
