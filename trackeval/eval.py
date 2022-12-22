@@ -232,16 +232,32 @@ class Evaluator:
 # metric_names: ['CLEAR', 'Count']
 def eval_sequence(seq, dataset, tracker, class_list, metrics_list, metric_names):
     """Function for evaluating a single sequence"""
-    print("_________________chạy xuống dòng 235______________________________")
-    raw_data = dataset.get_raw_seq_data(tracker, seq)
-    print(type(raw_data))
+    raw_data = dataset.get_raw_seq_data(tracker, seq)    #function này từ class MotChallenge2DBox  kế thừa _BaseDataset
+    print()
+    print(raw_data.keys())
     print(len(raw_data))
-    with open("a.txt","w") as f:
-        f.write(str(raw_data))
     seq_res = {}
+    # class_list : pedestrian
     for cls in class_list:
         seq_res[cls] = {}
         data = dataset.get_preprocessed_seq_data(raw_data, cls)
+        print("|           ________________________data.keys()________________________________|")
+        print(data.keys())
+        print("|           ___________________________________________________________________|")
+        #print(data)
         for metric, met_name in zip(metrics_list, metric_names):
+            print("_____________________ cls__________________________________________________")
+            print(cls)
+            print("_____________________ metric_______________________________________________")
+            print(metric)
+            print("_____________________met_name (metric_names)_______________________________")
             seq_res[cls][met_name] = metric.eval_sequence(data)
+            print(met_name ,"\n\n\n") 
+
+
+    print("_________________seq_res__________________________________________")
+    print(seq_res)
+    print(" _________________________________________________________________")
+    print("|               TÍNH TOÁN ĐÃ HOÀN TẤT !!!!!!!!!!!!                |")
+    print("|_________________________________________________________________|")
     return seq_res

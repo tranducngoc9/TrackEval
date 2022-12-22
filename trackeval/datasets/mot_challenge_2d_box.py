@@ -185,21 +185,35 @@ class MotChallenge2DBox(_BaseDataset):
         """
         # File location
         if self.data_is_zipped:
+            
             if is_gt:
                 zip_file = os.path.join(self.gt_fol, 'data.zip')
             else:
                 zip_file = os.path.join(self.tracker_fol, tracker, self.tracker_sub_fol + '.zip')
             file = seq + '.txt'
         else:
+            print("@@@@@@@@@@@@@@@@@@@")
             zip_file = None
             if is_gt:
                 file = self.config["GT_LOC_FORMAT"].format(gt_folder=self.gt_fol, seq=seq)
+                # file: /home/ngoc/Documents/TrackEval/data/gt/mot_challenge/MOT17-train/MOT17-02-DPM/gt/gt.txt
             else:
                 file = os.path.join(self.tracker_fol, tracker, self.tracker_sub_fol, seq + '.txt')
+                #file: /home/ngoc/Documents/TrackEval/data/trackers/mot_challenge/MOT17-train/MPNTrack/data/MOT17-02-DPM.txt
 
         # Load raw data from text file
+        #read_data load toàn bộ trong file text tracker
+        #ignore_data là dữ liệu ko dùng được = {}
         read_data, ignore_data = self._load_simple_text_file(file, is_zipped=self.data_is_zipped, zip_file=zip_file)
-
+#Ví dụ về read_data
+#Nếu là tracker
+# {'1': [['1', '0.0', '447.4205017089844', '440.7640686035156', '104.33230590820312', '282.5323181152344', '1', '-1', '-1', '-1'], 
+# ['1', '1.0', '1098.0538330078123', '437.7935485839844', '38.2166748046875', '110.68978881835938', '1', '-1', '-1', '-1'], 
+# ['1', '2.0', '1256.2720947265625'
+#Nếu là gt
+#{'1': [['1', '1', '912', '484', '97', '109', '0', '7', '1'], ['1', '2', '1338', '418', '167', '379', '1', '1', '1'], 
+# ['1', '3', '586', '447', '85', '263', '1', '1', '1'], ['1', '4', '1585', '-1', '336', '578', '0', '9', '0.98153'], 
+# ['1', '5', '1163', '441', 
         # Convert data to required format
         num_timesteps = self.seq_lengths[seq]
         data_keys = ['ids', 'classes', 'dets']
@@ -334,10 +348,12 @@ class MotChallenge2DBox(_BaseDataset):
         unique_tracker_ids = []
         num_gt_dets = 0
         num_tracker_dets = 0
+        # raw_data['num_timesteps'] số Frame
         for t in range(raw_data['num_timesteps']):
 
             # Get all data
             gt_ids = raw_data['gt_ids'][t]
+            # print("##########", gt_ids)
             gt_dets = raw_data['gt_dets'][t]
             gt_classes = raw_data['gt_classes'][t]
             gt_zero_marked = raw_data['gt_extras'][t]['zero_marked']

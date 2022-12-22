@@ -13,6 +13,9 @@ class Count(_BaseMetric):
 
     @_timing.time
     def eval_sequence(self, data):
+        print("##########################################################")
+        print("##### LUỒNG CHẠY VÀO count.py ############################")
+        print("##########################################################")
         """Returns counts for one sequence"""
         # Get results
         res = {'Dets': data['num_tracker_dets'],
