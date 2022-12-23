@@ -170,7 +170,7 @@ class MotChallenge2DBox(_BaseDataset):
                     ini_data.read(ini_file)
                     seq_lengths[seq] = int(ini_data['Sequence']['seqLength'])
         return seq_list, seq_lengths
-
+    # Hàm này load dữ liệu thô , không chỉnh sử gì trong function này
     def _load_raw_file(self, tracker, seq, is_gt):
         """Load a file (gt or tracker) in the MOT Challenge 2D box format
 
@@ -192,7 +192,6 @@ class MotChallenge2DBox(_BaseDataset):
                 zip_file = os.path.join(self.tracker_fol, tracker, self.tracker_sub_fol + '.zip')
             file = seq + '.txt'
         else:
-            print("@@@@@@@@@@@@@@@@@@@")
             zip_file = None
             if is_gt:
                 file = self.config["GT_LOC_FORMAT"].format(gt_folder=self.gt_fol, seq=seq)
@@ -261,8 +260,10 @@ class MotChallenge2DBox(_BaseDataset):
                             'Cannot convert tracking data from tracker %s, sequence %s to float. Is data corrupted?' % (
                                 tracker, seq))
                 try:
-                    raw_data['dets'][t] = np.atleast_2d(time_data[:, 2:6]) #Lấy tọa độ bbleft, bbtop, bbwidth, bbheight
-                    raw_data['ids'][t] = np.atleast_1d(time_data[:, 1]).astype(int) #Lấy id 
+                    #Lấy tọa độ bbleft, bbtop, bbwidth, bbheight  
+                    raw_data['dets'][t] = np.atleast_2d(time_data[:, 2:6]) 
+                    #Lấy id 
+                    raw_data['ids'][t] = np.atleast_1d(time_data[:, 1]).astype(int) 
                 except IndexError:
                     if is_gt:
                         err = 'Cannot load gt data from sequence %s, because there is not enough ' \
@@ -272,8 +273,13 @@ class MotChallenge2DBox(_BaseDataset):
                         err = 'Cannot load tracker data from tracker %s, sequence %s, because there is not enough ' \
                               'columns in the data.' % (tracker, seq)
                         raise TrackEvalException(err)
-                        
+                """ time_data.shape của gt = (x,9)
+                    time_data.shape của tracker = (x,10)"""   
+                
+
+                #Có đi vào if và  ko vào else
                 if time_data.shape[1] >= 8:
+                    # Phần tử thứ 6 là class
                     raw_data['classes'][t] = np.atleast_1d(time_data[:, 7]).astype(int)
                 else:
                     if not is_gt:
@@ -282,11 +288,14 @@ class MotChallenge2DBox(_BaseDataset):
                         raise TrackEvalException(
                             'GT data is not in a valid format, there is not enough rows in seq %s, timestep %i.' % (
                                 seq, t))
+
                 if is_gt:
                     gt_extras_dict = {'zero_marked': np.atleast_1d(time_data[:, 6].astype(int))}
+
                     raw_data['gt_extras'][t] = gt_extras_dict
                 else:
                     raw_data['tracker_confidences'][t] = np.atleast_1d(time_data[:, 6])
+            #Không vào else
             else:
                 raw_data['dets'][t] = np.empty((0, 4))
                 raw_data['ids'][t] = np.empty(0).astype(int)
@@ -298,7 +307,6 @@ class MotChallenge2DBox(_BaseDataset):
                     raw_data['tracker_confidences'][t] = np.empty(0)
             if is_gt:
                 raw_data['gt_crowd_ignore_regions'][t] = np.empty((0, 4))
-
         if is_gt:
             key_map = {'ids': 'gt_ids',
                        'classes': 'gt_classes',
@@ -307,9 +315,11 @@ class MotChallenge2DBox(_BaseDataset):
             key_map = {'ids': 'tracker_ids',
                        'classes': 'tracker_classes',
                        'dets': 'tracker_dets'}
+
         for k, v in key_map.items():
             raw_data[v] = raw_data.pop(k)
         raw_data['num_timesteps'] = num_timesteps
+        # seq = MOT17-02-DPM
         raw_data['seq'] = seq
         return raw_data
 
