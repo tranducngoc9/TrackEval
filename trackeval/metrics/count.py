@@ -13,9 +13,7 @@ class Count(_BaseMetric):
 
     @_timing.time
     def eval_sequence(self, data):
-        print("##########################################################")
-        print("##### LUỒNG CHẠY VÀO count.py ############################")
-        print("##########################################################")
+        print("___________________________count.py___________________________________")
         """Returns counts for one sequence"""
         # Get results
         res = {'Dets': data['num_tracker_dets'],
@@ -23,6 +21,7 @@ class Count(_BaseMetric):
                'IDs': data['num_tracker_ids'],
                'GT_IDs': data['num_gt_ids'],
                'Frames': data['num_timesteps']}
+        print(res.keys())
         return res
 
     def combine_sequences(self, all_res):

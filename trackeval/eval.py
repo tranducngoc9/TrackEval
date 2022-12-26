@@ -72,7 +72,6 @@ class Evaluator:
 
             # Evaluate each tracker
             for tracker in tracker_list:
-                print("************************************")
                 # if not config['BREAK_ON_ERROR'] then go to next tracker without breaking
                 try:
                     # Evaluate each sequence in parallel or in series.
@@ -104,7 +103,6 @@ class Evaluator:
                                 results = pool.map(_eval_sequence, seq_list)
                                 res = dict(zip(seq_list, results))
                     else:
-                        print("++++++++++++++++++++++++++++++++++++++++++++++++++")
                         res = {}
                         # TQDM_IMPORTED = Flase
                         if show_progressbar and TQDM_IMPORTED:
@@ -113,7 +111,6 @@ class Evaluator:
                                 res[curr_seq] = eval_sequence(curr_seq, dataset, tracker, class_list, metrics_list,
                                                               metric_names)
                         else:
-                            print("------------------------------------------------")
                             # curr_seq: data con trong list data (seq_list)
                             # dataset: <trackeval.datasets.mot_challenge_2d_box.MotChallenge2DBox object at 0x7fa5f348a460>
                             # tracker: MPNTrack
@@ -231,6 +228,7 @@ class Evaluator:
 # metrics_list: [<trackeval.metrics.clear.CLEAR object at 0x7f317c8a51f0>, <trackeval.metrics.count.Count object at 0x7f317c8a5310>]
 # metric_names: ['CLEAR', 'Count']
 def eval_sequence(seq, dataset, tracker, class_list, metrics_list, metric_names):
+    print("___________________________eval.py____________________________________")
     """Function for evaluating a single sequence"""
     raw_data = dataset.get_raw_seq_data(tracker, seq)    #function này từ class MotChallenge2DBox  kế thừa _BaseDataset
     print()
@@ -241,18 +239,11 @@ def eval_sequence(seq, dataset, tracker, class_list, metrics_list, metric_names)
     for cls in class_list:
         seq_res[cls] = {}
         data = dataset.get_preprocessed_seq_data(raw_data, cls)
-        print("|           ________________________data.keys()________________________________|")
         print(data.keys())
-        print("|           ___________________________________________________________________|")
         #print(data)
         for metric, met_name in zip(metrics_list, metric_names):
-            print("_____________________ cls__________________________________________________")
-            print(cls)
-            print("_____________________ metric_______________________________________________")
-            print(metric)
-            print("_____________________met_name (metric_names)_______________________________")
             seq_res[cls][met_name] = metric.eval_sequence(data)
-            print(met_name ,"\n\n\n") 
+
 
 
     print("_________________seq_res__________________________________________")

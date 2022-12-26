@@ -325,6 +325,8 @@ class MotChallenge2DBox(_BaseDataset):
 
     @_timing.time
     def get_preprocessed_seq_data(self, raw_data, cls):
+        print("____________________mot_challenge_2d_box.py___________________________")
+        print("+++++++++++++++++++get_preprocessed_seq_data()++++++++++++++++++++++++")
         """ Preprocess data for a single sequence for a single class ready for evaluation.
         Inputs:
              - raw_data is a dict containing the data for the sequence already read in by get_raw_seq_data().

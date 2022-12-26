@@ -36,10 +36,8 @@ class CLEAR(_BaseMetric):
 
     @_timing.time
     def eval_sequence(self, data):
-        print("##########################################################")
-        print("#                LUỒNG CHẠY VÀO clear.py                 #")
-        print("#     ĐÂY LÀ PHẦN TÍNH TOÁN CHÍNH CỦA THAM SỐ CLEAR      #")
-        print("##########################################################")
+        print("___________________________clear.py___________________________________")
+        print(data.keys())
         """Calculates CLEAR metrics for one sequence"""
         # Initialise results
         res = {}
@@ -61,7 +59,8 @@ class CLEAR(_BaseMetric):
 
         # Variables counting global association
         num_gt_ids = data['num_gt_ids']
-        print(num_gt_ids)
+        print("num_gt_ids: ",num_gt_ids)
+        print("num_tracker_ids: ",data['num_tracker_ids'])
         gt_id_count = np.zeros(num_gt_ids)  # For MT/ML/PT
         gt_matched_count = np.zeros(num_gt_ids)  # For MT/ML/PT
         gt_frag_count = np.zeros(num_gt_ids)  # For Frag
@@ -133,6 +132,7 @@ class CLEAR(_BaseMetric):
 
         # Calculate final CLEAR scores
         res = self._compute_final_fields(res)
+        print(res.keys())
         return res
 
     def combine_sequences(self, all_res):

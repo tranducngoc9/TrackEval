@@ -95,7 +95,6 @@ if __name__ == '__main__':
     metrics_list = []
     print("__________________________Bat dau for_________________________________________________")
     for metric in [trackeval.metrics.HOTA, trackeval.metrics.CLEAR, trackeval.metrics.Identity, trackeval.metrics.VACE]:
-        print("###################################################################################")
         if metric.get_name() in metrics_config['METRICS']:
             metrics_list.append(metric(metrics_config))
     if len(metrics_list) == 0:
