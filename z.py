@@ -40,5 +40,15 @@ def _calculate_box_ious(bboxes1, bboxes2, box_format='xywh', do_ioa=False):
         return ious
 a = np.array([[9.5,9.5,1,1]])
 b = np.array([[9,9.5,1,1]])
-print(_calculate_box_ious(a,b))
-print("ok")
+
+# a = np.array([np.nan,np.nan ,np.nan])
+# print(len(a))
+# b = np.array([np.nan, 1,2, np.nan])
+# print(len(b))
+
+
+
+print(0 + np.finfo('float').eps)
+a = 1>0.5
+print(a)
+

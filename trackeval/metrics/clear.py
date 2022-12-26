@@ -37,7 +37,6 @@ class CLEAR(_BaseMetric):
     @_timing.time
     def eval_sequence(self, data):
         print("___________________________clear.py___________________________________")
-        print(data.keys())
         """Calculates CLEAR metrics for one sequence"""
         # Initialise results
         res = {}
@@ -67,8 +66,13 @@ class CLEAR(_BaseMetric):
 
         # Note that IDSWs are counted based on the last time each gt_id was present (any number of frames previously),
         # but are only used in matching to continue current tracks based on the gt_id in the single previous timestep.
-        prev_tracker_id = np.nan * np.zeros(num_gt_ids)  # For scoring IDSW
-        prev_timestep_tracker_id = np.nan * np.zeros(num_gt_ids)  # For matching IDSW
+        prev_tracker_id = np.nan * np.zeros(num_gt_ids)  # For scoring IDSW    62 phần tử nan trong list
+        print(prev_tracker_id)
+        print(len(prev_tracker_id))
+        prev_timestep_tracker_id = np.nan * np.zeros(num_gt_ids)  # For matching IDSW    62 phần tử nan trong list
+        print(prev_timestep_tracker_id)
+        print(len(prev_timestep_tracker_id))
+
 
         # Calculate scores for each timestep
         for t, (gt_ids_t, tracker_ids_t) in enumerate(zip(data['gt_ids'], data['tracker_ids'])):
@@ -89,6 +93,7 @@ class CLEAR(_BaseMetric):
 
             # Hungarian algorithm to find best matches
             match_rows, match_cols = linear_sum_assignment(-score_mat)
+            print(match_rows, match_cols)
             actually_matched_mask = score_mat[match_rows, match_cols] > 0 + np.finfo('float').eps
             match_rows = match_rows[actually_matched_mask]
             match_cols = match_cols[actually_matched_mask]

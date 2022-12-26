@@ -247,7 +247,7 @@ def eval_sequence(seq, dataset, tracker, class_list, metrics_list, metric_names)
 
 
     print("_________________seq_res__________________________________________")
-    print(seq_res)
+    # print(seq_res)
     print(" _________________________________________________________________")
     print("|               TÍNH TOÁN ĐÃ HOÀN TẤT !!!!!!!!!!!!                |")
     print("|_________________________________________________________________|")
