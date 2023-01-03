@@ -93,7 +93,6 @@ class CLEAR(_BaseMetric):
 
             # Hungarian algorithm to find best matches
             match_rows, match_cols = linear_sum_assignment(-score_mat)
-            print(match_rows, match_cols)
             actually_matched_mask = score_mat[match_rows, match_cols] > 0 + np.finfo('float').eps
             match_rows = match_rows[actually_matched_mask]
             match_cols = match_cols[actually_matched_mask]
@@ -105,6 +104,7 @@ class CLEAR(_BaseMetric):
             prev_matched_tracker_ids = prev_tracker_id[matched_gt_ids]
             is_idsw = (np.logical_not(np.isnan(prev_matched_tracker_ids))) & (
                 np.not_equal(matched_tracker_ids, prev_matched_tracker_ids))
+            print(is_idsw)
             res['IDSW'] += np.sum(is_idsw)
 
             # Update counters for MT/ML/PT/Frag and record for IDSW/Frag for next timestep
